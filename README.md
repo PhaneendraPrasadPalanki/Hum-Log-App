@@ -1,4 +1,4 @@
-# 🎭 Guess Board Chat App
+# 🎭 Best Friends Chat App
 
 A fun, real-time multiplayer chat application featuring interactive games like **Guess Board**, **Telepathy Test**, **Event Planner**, **Bucket List**, and **Birthday Countdown** – all running via WebSocket with a Go backend and vanilla JS frontend.
 
