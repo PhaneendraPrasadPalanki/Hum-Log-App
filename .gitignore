@@ -1,0 +1,14 @@
+# Ignore node_modules, compiled files, uploads
+node_modules/
+public/uploads/
+.DS_Store
+*.log
+
+# Go-specific
+*.exe
+*.out
+*.test
+vendor/
+
+# System
+.env

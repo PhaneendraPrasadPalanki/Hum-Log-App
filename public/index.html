@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Go Chat App</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/emoji-picker/1.3.0/css/emoji.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+  <audio id="messageSound" src="sounds/notification.wav" preload="auto"></audio>
+  <h1 class="app-title">🗨️ Hum Log</h1>
+
+  <header>
+    <div>
+      <strong>Logged in as:</strong> <span id="displayUsername"></span>
+      <button style="color: red; border-color: red;" onclick="logout()">Logout</button>
+    </div>
+    <nav>
+      <button onclick="showView('chat')">Chat</button>
+      <button onclick="showView('events')">📅 Event Planner</button>
+      <button onclick="showView('birthdays')">🎉 Birthdays</button>
+      <button onclick="showView('bucketlist')">📝 Bucket List</button>
+      <button onclick="showView('telepathy')">🧠 Telepathy Test</button>
+      <button onclick="showView('guess-board')">🎭 Guess Board</button>
+    </nav>
+  </header>
+
+  <!-- 🗨️ Chat View -->
+  <div class="chat-container" id="chat-view">
+    <aside id="userList">
+      <h3>Online Users</h3>
+      <ul id="users"></ul>
+    </aside>
+    <main>
+      <div id="chat"></div>
+      <p id="typing-indicator" style="margin-left: 20px; font-style: italic; color: #aaa;"></p>
+      <div id="messageContainer">
+        <div class="emoji-picker-container">
+          <input id="message" class="emojiable-option" data-emojiable="true" placeholder="Type a message..." />
+        </div>  
+        <div class="chat-buttons">
+          <button id="sendBtn" onclick="sendMessage()">Send</button>
+          <button id="recordBtn">Record Voice</button>
+        </div>
+      </div>
+      
+    </main>
+  </div>
+
+  <!-- 📅 Event Planner -->
+  <div id="event-planner" style="display: none; padding: 20px;">
+    <h2>Create New Event</h2>
+    <form id="eventForm">
+      <input type="text" id="eventTitle" placeholder="Event Title" required />
+      <textarea id="eventDesc" placeholder="Description"></textarea><br/>
+      <input type="date" id="eventDate" required />
+      <input type="time" id="eventStart" required />
+      <input type="time" id="eventEnd" required />
+      <button type="submit">Add Event</button>
+    </form>
+    <h2>Upcoming Events</h2>
+    <div id="eventCards"></div>
+  </div>
+
+  <!-- 🎉 Birthday Countdown -->
+<div id="birthday-section" style="display: none; padding: 20px;">
+    <h2>🎉 Birthday Countdown</h2>
+    <div id="birthdayCountdowns" class="birthday-countdowns"></div>
+  </div>  
+
+<!-- 📝 Bucket List -->
+<div id="bucket-list" style="display: none; padding: 20px;">
+    <h2>📝 Shared Bucket List</h2>
+    <form id="bucketForm">
+      <input type="text" id="bucketInput" placeholder="Add something awesome..." required />
+      <button type="submit">Add</button>
+    </form>
+    <ul id="bucketItems" class="bucket-items"></ul>
+  </div>
+  
+  <!-- 🧠 Telepathy Test -->
+<div id="telepathy-section" style="display: none; padding: 20px;">
+  <h2>🧠 Telepathy Test</h2>
+  <div id="telepathyIntro">
+    <p>Take the same test with your friends and see who you’re most synced with!</p>
+    <button onclick="startTelepathyTest()">Start Test</button>
+  </div>
+  <div id="telepathyTestArea" style="display: none;">
+    <form id="telepathyForm">
+      <div id="telepathyQuestions"></div>
+      <button type="submit">Submit Answers</button>
+    </form>
+  </div>
+  <div id="telepathyResults" style="margin-top: 20px;"></div>
+</div>
+
+<!-- 🎭 Guess Board -->
+<div id="guess-board" style="display: none; padding: 20px;">
+  <h2>🎭 Guess Board</h2>
+
+  <form id="guessForm">
+    <input type="text" id="guessInput" placeholder="Enter something fun or sneaky..." required />
+    <button type="submit">Post Statement</button>
+  </form>
+
+  <div id="guessStatements" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 20px;"></div>
+</div>
+
+  <!-- 👤 Avatar Modal -->
+  <div id="avatarModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h2>Select an Avatar</h2>
+      <input type="text" id="usernameInput" placeholder="Enter your username" />
+      <div class="avatar-selection">
+        <div class="avatar-option" data-avatar="panda"><img src="assets/avatars/panda.png" alt="Panda" /></div>
+        <div class="avatar-option" data-avatar="sloth"><img src="assets/avatars/sloth.png" alt="Sloth" /></div>
+        <div class="avatar-option" data-avatar="koala"><img src="assets/avatars/koala.png" alt="Koala" /></div>
+        <div class="avatar-option" data-avatar="retriever"><img src="assets/avatars/retriever.png" alt="Retriever" /></div>
+      </div>
+      <button id="confirmAvatarBtn">Join Chat</button>
+    </div>
+  </div>
+
+
+<!-- ✅ jQuery (Required) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- ✅ Emoji Picker JS Bundle -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/emoji-picker/1.3.0/js/config.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/emoji-picker/1.3.0/js/util.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/emoji-picker/1.3.0/js/jquery.emojiarea.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/emoji-picker/1.3.0/js/emoji-picker.min.js"></script>
+<!-- ✅ Correct emoji-button script for browser usage -->
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script src="js/chat.js"></script>
+
+  <script>
+    function showView(view) {
+      document.getElementById("chat-view").style.display = view === 'chat' ? "flex" : "none";
+      document.getElementById("event-planner").style.display = view === 'events' ? "block" : "none";
+      document.getElementById("birthday-section").style.display = view === 'birthdays' ? "block" : "none";
+      document.getElementById("bucket-list").style.display = view === 'bucketlist' ? "block" : "none";
+      document.getElementById("telepathy-section").style.display = view === 'telepathy' ? "block" : "none";
+      document.getElementById("guess-board").style.display = view === 'guess-board' ? "block" : "none";
+
+  if (view === "birthdays") startBirthdayCountdowns();
+    }
+  </script>
+</body>
+</html>
